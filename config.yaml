@@ -1,0 +1,32 @@
+# 圓形標籤檢測系統配置
+# Circle Label Detection System Configuration
+
+# 標籤生成參數 (Hough Circle Detection)
+labeling:
+  param2: 28          # 檢測閾值 (越低越敏感，建議 25-35)
+  min_dist: 60        # 圓心最小間距
+  min_radius: 42      # 最小半徑 (pixels)
+  max_radius: 65      # 最大半徑 (pixels)
+  train_ratio: 0.8    # 訓練集比例
+
+# 模型訓練參數
+training:
+  epochs: 80          # 訓練輪數
+  batch_size: 8       # 批次大小
+  img_size: 640       # 輸入尺寸
+  device: mps         # 設備: mps / cuda / cpu
+  base_model: yolov8n.pt
+
+# 推論參數
+inference:
+  model_path: models/best.pt
+  confidence: 0.35    # 置信度閾值 (0.25-0.5)
+  device: mps         # 設備: mps / cuda / cpu
+  ocr_lang: en        # OCR語言: en / ch
+  y_tolerance: null   # 行分組容差 (null=自動)
+
+# 路徑配置
+paths:
+  input_dir: pic_demo
+  output_dir: result_images
+  dataset_dir: dataset

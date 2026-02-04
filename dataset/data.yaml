@@ -1,0 +1,8 @@
+path: /Users/jeeshyang/Workspace/Work/YoloLabs/dataset
+train: images/train
+val: images/val
+
+names:
+  0: circle_label
+
+nc: 1
