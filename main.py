@@ -35,6 +35,7 @@ class CircleLabelPipeline:
         model_path: str | Path,
         confidence_threshold: float = 0.5,
         y_tolerance: Optional[int] = None,
+        crop_padding: int = 0,
         ocr_device: str = "cpu",
         ocr_lang: str = "en"
     ):
@@ -51,6 +52,7 @@ class CircleLabelPipeline:
         self.model_path = Path(model_path)
         self.confidence_threshold = confidence_threshold
         self.y_tolerance = y_tolerance
+        self.crop_padding = crop_padding
         
         # Initialize detector
         self.detector = CircleDetector(
@@ -98,7 +100,7 @@ class CircleLabelPipeline:
         # Extract text from each detected circle
         texts = []
         for box in boxes:
-            roi = self.detector.crop_roi(image, box, padding=5)
+            roi = self.detector.crop_roi(image, box, padding=self.crop_padding)
             text = self.ocr.extract_text(roi)
             texts.append(text)
         
@@ -253,6 +255,12 @@ def main():
         help="Y-coordinate tolerance for row grouping (auto if not set)"
     )
     parser.add_argument(
+        "--padding",
+        type=int,
+        default=0,
+        help="Padding for crop (pixels)"
+    )
+    parser.add_argument(
         "--device",
         type=str,
         default=None,
@@ -283,6 +291,7 @@ def main():
         model_path=args.model,
         confidence_threshold=args.confidence,
         y_tolerance=args.y_tolerance,
+        crop_padding=args.padding,
         ocr_device="cpu",  # Safe default for Mac
         ocr_lang=args.lang
     )

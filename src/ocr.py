@@ -177,6 +177,10 @@ class LabelOCR:
         # Convert to uppercase for consistency
         cleaned = cleaned.upper()
         
+        # Remove common border artifacts (leading C, O, 0 followed by space)
+        # e.g., "C AV" -> "AV", "O AV" -> "AV"
+        cleaned = re.sub(r'^[CO0]\s+(?=[A-Z])', '', cleaned)
+        
         return cleaned
     
     def batch_extract(

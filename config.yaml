@@ -24,6 +24,7 @@ inference:
   device: mps         # 設備: mps / cuda / cpu
   ocr_lang: en        # OCR語言: en / ch
   y_tolerance: null   # 行分組容差 (null=自動)
+  crop_padding: -2    # 裁剪填充 (pixels)
 
 # 路徑配置
 paths:
