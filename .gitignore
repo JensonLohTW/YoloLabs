@@ -22,14 +22,14 @@ ENV/
 Thumbs.db
 
 # Model weights (large files)
-*.pt
-*.pth
-!models/.gitkeep
+# *.pt
+# *.pth
+!models/best.pt
 
 # Results
-result_images/
-*.csv
-*.xlsx
+# result_images/
+# *.csv
+# *.xlsx
 
 # PaddleOCR cache
 ~/.paddleocr/
