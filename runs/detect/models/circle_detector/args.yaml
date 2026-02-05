@@ -10,7 +10,7 @@ imgsz: 640
 save: true
 save_period: 10
 cache: false
-device: mps
+device: cpu
 workers: 8
 project: models
 name: circle_detector

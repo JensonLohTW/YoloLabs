@@ -62,32 +62,31 @@ class LabelOCR:
         if preprocess:
             roi_image = self._preprocess(roi_image)
         
-        # Run OCR using v3.4 API
+        # Run OCR using v2.x API (compatible with older paddle)
         try:
-            results = self.ocr.predict(roi_image)
+            # cls=False because we don't need orientation classification for simple labels usually
+            # result is a list of lists, one for each image. We process one image.
+            results = self.ocr.ocr(roi_image, cls=False, det=True, rec=True)
         except Exception as e:
             print(f"OCR error: {e}")
             return ""
         
         # Extract text from results
-        # V3.4 returns dict-like OCRResult objects
         texts = []
-        if results:
-            for res in results:
-                # Access as dictionary keys
-                rec_texts = res.get('rec_texts', [])
-                dt_polys = res.get('dt_polys', [])
+        # PaddleOCR returns [ [ [box], (text, score) ], ... ] for the first image
+        # results structure is [ [results_for_img1] ]
+        if results and results[0]:
+            for line in results[0]:
+                # line is [box, (text, score)]
+                # box is [[x1,y1], [x2,y2], [x3,y3], [x4,y4]]
+                box = line[0]
+                text_info = line[1]
                 
-                if rec_texts:
-                    # Get corresponding y-coordinates for sorting
-                    for i, text in enumerate(rec_texts):
-                        if text and text.strip():
-                            # Get average y-coordinate from polygon
-                            avg_y = 0
-                            if i < len(dt_polys):
-                                poly = dt_polys[i]
-                                avg_y = sum(p[1] for p in poly) / len(poly)
-                            texts.append((avg_y, text.strip()))
+                if text_info:
+                    text_str = text_info[0]
+                    # Average Y for sorting
+                    avg_y = sum(p[1] for p in box) / len(box)
+                    texts.append((avg_y, text_str.strip()))
         
         # Sort by y-coordinate (top to bottom)
         texts.sort(key=lambda x: x[0])
